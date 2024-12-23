@@ -2,14 +2,14 @@
   "version": 2,
   "builds": [
     {
-      "src": "dist/spa-angular-19/browser/**",
+      "src": "dist/absolute-cinema/browser/**",
       "use": "@vercel/static"
     }
   ],
   "routes": [
     {
       "src": "/(.*)",
-      "dest": "/dist/spa-angular-19/browser/$1"
+      "dest": "/dist/absolute-cinema/browser/$1"
     }
   ]
 }
