@@ -1,0 +1,184 @@
+<div class="container mt-4">
+  <div class="d-flex align-items-center gap-3 mb-3">
+    <button
+      class="btn btn-dark rounded-pill px-4 py-2"
+      onclick="history.back()"
+    >
+      Back
+    </button>
+    <h2 class="mb-0" *ngIf="!isTheaterLoading">Theater {{ theater.nama }}</h2>
+  </div>
+
+  <div class="d-flex" *ngIf="user?.role == 'admin'">
+    <!-- Tombol untuk membuka tambah modal -->
+    <button
+      type="button"
+      class="btn btn-primary mb-3"
+      data-bs-toggle="modal"
+      data-bs-target="#tambahMovieModal"
+    >
+      Tambah Movie
+    </button>
+
+    <!-- Tombol untuk membuka hapus modal -->
+    <button
+      type="button"
+      class="btn btn-danger mb-3 ms-auto"
+      data-bs-toggle="modal"
+      data-bs-target="#hapusMovieModal"
+    >
+      Hapus Movie
+    </button>
+  </div>
+
+  <!-- Loader -->
+  <div class="d-flex justify-content-center mt-4" *ngIf="isTheaterLoading">
+    <div class="spinner-border text-primary" role="status">
+      <span class="visually-hidden">Loading...</span>
+    </div>
+  </div>
+
+  <!-- Modal Tambah Movie -->
+  <div
+    class="modal fade"
+    id="tambahMovieModal"
+    tabindex="-1"
+    aria-labelledby="tambahMovieModalLabel"
+    aria-hidden="true"
+  >
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="tambahMovieModalLabel">Tambah Movie</h5>
+          <button
+            type="button"
+            class="btn-close"
+            data-bs-dismiss="modal"
+            aria-label="Close"
+          ></button>
+        </div>
+        <div class="modal-body">
+          <form [formGroup]="theaterForm" (ngSubmit)="addMovie()">
+            <div class="mb-3">
+              <label for="movieId" class="form-label">Movie</label>
+              <select
+                id="movieId"
+                class="form-select"
+                formControlName="movieId"
+              >
+                <ng-container *ngFor="let item of movie">
+                  <option
+                    *ngIf="!isMovieInTheater(item._id)"
+                    [value]="item._id"
+                  >
+                    {{ item.nama }}
+                  </option>
+                </ng-container>
+              </select>
+            </div>
+            <button
+              type="submit"
+              class="btn btn-primary"
+              [disabled]="isSubmitting"
+            >
+              {{ isSubmitting ? "Menyimpan..." : "Tambah Movie" }}
+            </button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal Hapus Movie -->
+  <div
+    class="modal fade"
+    id="hapusMovieModal"
+    tabindex="-1"
+    aria-labelledby="hapusMovieModalLabel"
+    aria-hidden="true"
+  >
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="hapusMovieModalLabel">Hapus Movie</h5>
+          <button
+            type="button"
+            class="btn-close"
+            data-bs-dismiss="modal"
+            aria-label="Close"
+          ></button>
+        </div>
+        <div class="modal-body">
+          <form [formGroup]="theaterForm" (ngSubmit)="deleteMovie()">
+            <div class="mb-3">
+              <label for="movieId" class="form-label">Movie</label>
+              <select
+                id="movieId"
+                class="form-select"
+                formControlName="movieId"
+              >
+                <ng-container *ngFor="let item of movie">
+                  <option *ngIf="isMovieInTheater(item._id)" [value]="item._id">
+                    {{ item.nama }}
+                  </option>
+                </ng-container>
+              </select>
+            </div>
+            <button
+              type="submit"
+              class="btn btn-danger"
+              [disabled]="isSubmitting"
+            >
+              {{ isSubmitting ? "Menyimpan..." : "Hapus Movie" }}
+            </button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Movie -->
+  <div class="row" *ngIf="theater?.movies.length > 0">
+    <div
+      class="col-12 col-sm-6 col-md-6 col-lg-4 g-3"
+      *ngFor="
+        let item of theater.movies
+          | paginate : { itemsPerPage: itemsPerPage, currentPage: currentPage };
+        index as i
+      "
+    >
+      <mat-card class="movie-card" appearance="outlined">
+        <img
+          class="image"
+          mat-card-image
+          src="{{ item.poster }}"
+          alt="Poster {{ item.nama }}"
+        />
+        <mat-card-header>
+          <mat-card-title class="title">
+            {{ item.nama }}
+          </mat-card-title>
+          <mat-card-subtitle>
+            {{ item.rating }}<i style="color: gold">&#9733; </i>
+            {{ item.genre ? item.genre.nama : "Belum Dikategorikan" }}
+          </mat-card-subtitle>
+        </mat-card-header>
+
+        <mat-card-content class="description">
+          {{ item.deskripsi }}
+        </mat-card-content>
+        <mat-card-actions>
+          <button mat-button (click)="goToDetail(item._id)">DETAIL</button>
+        </mat-card-actions>
+      </mat-card>
+    </div>
+  </div>
+
+  <!-- Pagination -->
+  <pagination-controls
+    class="p-3"
+    (pageChange)="currentPage = $event"
+    *ngIf="theater?.movies.length > 0"
+  >
+  </pagination-controls>
+</div>

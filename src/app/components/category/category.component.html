@@ -1,0 +1,135 @@
+<div class="container mt-3">
+  <h2>Daftar Category</h2>
+
+  <!-- Tombol untuk membuka modal -->
+  <button
+    type="button"
+    class="btn btn-primary mb-3"
+    data-bs-toggle="modal"
+    data-bs-target="#tambahCategoryModal"
+    *ngIf="user?.role == 'admin'"
+  >
+    Tambah Category
+  </button>
+
+  <!-- Modal Tambah Category -->
+  <div
+    class="modal fade"
+    id="tambahCategoryModal"
+    tabindex="-1"
+    aria-labelledby="tambahCategoryModalLabel"
+    aria-hidden="true"
+  >
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="tambahCategoryModalLabel">
+            Tambah Category
+          </h5>
+          <button
+            type="button"
+            class="btn-close"
+            data-bs-dismiss="modal"
+            aria-label="Close"
+          ></button>
+        </div>
+        <div class="modal-body">
+          <form [formGroup]="categoryForm" (ngSubmit)="addCategory()">
+            <div class="mb-3">
+              <label for="nama" class="form-label">Nama</label>
+              <input
+                id="nama"
+                type="text"
+                class="form-control"
+                formControlName="nama"
+              />
+            </div>
+            <button
+              type="submit"
+              class="btn btn-primary"
+              [disabled]="isSubmitting"
+            >
+              {{ isSubmitting ? "Menyimpan..." : "Tambah Category" }}
+            </button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal Edit Category -->
+  <div
+    class="modal fade"
+    id="editCategoryModal"
+    tabindex="-1"
+    aria-labelledby="editCategoryModalLabel"
+    aria-hidden="true"
+  >
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="editCategoryModalLabel">Ubah Category</h5>
+          <button
+            type="button"
+            class="btn-close"
+            data-bs-dismiss="modal"
+            aria-label="Close"
+          ></button>
+        </div>
+        <div class="modal-body">
+          <form [formGroup]="categoryForm" (ngSubmit)="updateCategory()">
+            <div class="mb-3">
+              <label for="editNama" class="form-label">Nama Category</label>
+              <input
+                id="editNama"
+                type="text"
+                class="form-control"
+                formControlName="nama"
+              />
+            </div>
+            <button
+              type="submit"
+              class="btn btn-primary"
+              [disabled]="isSubmitting"
+            >
+              {{ isSubmitting ? "Menyimpan..." : "Ubah Category" }}
+            </button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Loader -->
+  <div class="d-flex justify-content-center mt-4" *ngIf="isCategoryLoading">
+    <div class="spinner-border text-primary" role="status">
+      <span class="visually-hidden">Loading...</span>
+    </div>
+  </div>
+
+  <!-- Tabel Category -->
+  <table class="table table-striped" *ngIf="category.length > 0">
+    <thead>
+      <tr>
+        <th class="col-8">category</th>
+        <th class="col-4" *ngIf="user?.role == 'admin'">Aksi</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let item of category; index as i">
+        <td>{{ item.nama }}</td>
+        <td *ngIf="user?.role == 'admin'">
+          <button
+            class="btn btn-warning me-2"
+            (click)="getCategoryById(item._id)"
+          >
+            Edit
+          </button>
+          <button class="btn btn-danger" (click)="deleteCategory(item._id)">
+            Hapus
+          </button>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</div>

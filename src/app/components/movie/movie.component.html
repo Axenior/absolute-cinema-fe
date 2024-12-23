@@ -1,0 +1,145 @@
+<div class="container mt-3">
+  <h4>Daftar Movie</h4>
+
+  <!-- Tombol untuk membuka tambah modal -->
+  <button
+    type="button"
+    class="btn btn-primary mb-3"
+    data-bs-toggle="modal"
+    data-bs-target="#tambahMovieModal"
+    *ngIf="user?.role == 'admin'"
+  >
+    Tambah Movie
+  </button>
+
+  <!-- Loader -->
+  <div class="d-flex justify-content-center mt-4" *ngIf="isLoading">
+    <div class="spinner-border text-primary" role="status">
+      <span class="visually-hidden">Loading...</span>
+    </div>
+  </div>
+
+  <!-- Modal Tambah Movie -->
+  <div
+    class="modal fade"
+    id="tambahMovieModal"
+    tabindex="-1"
+    aria-labelledby="tambahMovieModalLabel"
+    aria-hidden="true"
+  >
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="tambahMovieModalLabel">Tambah Movie</h5>
+          <button
+            type="button"
+            class="btn-close"
+            data-bs-dismiss="modal"
+            aria-label="Close"
+          ></button>
+        </div>
+        <div class="modal-body">
+          <form [formGroup]="movieForm" (ngSubmit)="addMovie()">
+            <div class="mb-3">
+              <label for="nama" class="form-label">Nama</label>
+              <input
+                id="nama"
+                type="text"
+                class="form-control"
+                formControlName="nama"
+              />
+            </div>
+            <div class="mb-3">
+              <label for="genre" class="form-label">Genre</label>
+              <select id="genre" class="form-select" formControlName="genre">
+                <option *ngFor="let item of category" [value]="item._id">
+                  {{ item.nama }}
+                </option>
+              </select>
+            </div>
+            <div class="mb-3">
+              <label for="deskripsi" class="form-label">Deskripsi</label>
+              <textarea
+                id="deskripsi"
+                type="text"
+                class="form-control"
+                formControlName="deskripsi"
+              >
+              </textarea>
+            </div>
+            <div class="mb-3">
+              <label for="rating" class="form-label">Rating</label>
+              <input
+                id="rating"
+                type="number"
+                class="form-control"
+                formControlName="rating"
+              />
+            </div>
+            <div class="mb-3">
+              <label for="poster" class="form-label">Poster</label>
+              <input
+                id="poster"
+                type="file"
+                class="form-control"
+                (change)="onFileSelected($event)"
+              />
+            </div>
+            <button
+              type="submit"
+              class="btn btn-primary"
+              [disabled]="isSubmitting"
+            >
+              {{ isSubmitting ? "Menyimpan..." : "Tambah Movie" }}
+            </button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Movie -->
+  <div class="row" *ngIf="movie.length > 0">
+    <div
+      class="col-12 col-sm-6 col-md-6 col-lg-4 g-3"
+      *ngFor="
+        let item of movie
+          | paginate : { itemsPerPage: itemsPerPage, currentPage: currentPage };
+        index as i
+      "
+    >
+      <mat-card class="movie-card" appearance="outlined">
+        <img
+          class="image"
+          mat-card-image
+          src="{{ item.poster }}"
+          alt="Poster {{ item.nama }}"
+        />
+        <mat-card-header>
+          <mat-card-title class="title">
+            {{ item.nama }}
+          </mat-card-title>
+          <mat-card-subtitle>
+            {{ item.rating }}<i style="color: gold">&#9733; </i>
+            {{ item.genre ? item.genre.nama : "Belum Dikategorikan" }}
+          </mat-card-subtitle>
+        </mat-card-header>
+
+        <mat-card-content class="description">
+          {{ item.deskripsi }}
+        </mat-card-content>
+        <mat-card-actions>
+          <button mat-button (click)="goToDetail(item._id)">DETAIL</button>
+        </mat-card-actions>
+      </mat-card>
+    </div>
+  </div>
+
+  <!-- Pagination -->
+  <pagination-controls
+    class="p-3"
+    (pageChange)="currentPage = $event"
+    *ngIf="movie.length > 0"
+  >
+  </pagination-controls>
+</div>

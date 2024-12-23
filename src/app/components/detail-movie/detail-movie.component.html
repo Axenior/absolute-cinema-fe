@@ -1,0 +1,221 @@
+<div class="container mt-4">
+  <div class="d-flex align-items-center gap-3 mb-3">
+    <button
+      class="btn btn-dark rounded-pill px-4 py-2"
+      onclick="history.back()"
+    >
+      Back
+    </button>
+    <h2 class="mb-0">Detail Movie</h2>
+  </div>
+
+  <div
+    class="d-flex align-items-center gap-3 mb-3 justify-content-end"
+    *ngIf="user?.role == 'admin'"
+  >
+    <!-- Tombol Membuka Modal Edit Movie -->
+    <button
+      class="btn btn-warning rounded-pill px-4"
+      (click)="openEditMovieModal()"
+    >
+      Edit
+    </button>
+    <button class="btn btn-danger rounded-pill px-4" (click)="deleteMovie()">
+      Hapus
+    </button>
+  </div>
+
+  <!-- Modal Edit Movie -->
+  <div
+    class="modal fade"
+    id="editMovieModal"
+    tabindex="-1"
+    aria-labelledby="editMovieModalLabel"
+    aria-hidden="true"
+  >
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="editMovieModalLabel">edit Movie</h5>
+          <button
+            type="button"
+            class="btn-close"
+            data-bs-dismiss="modal"
+            aria-label="Close"
+          ></button>
+        </div>
+        <div class="modal-body">
+          <form [formGroup]="movieForm" (ngSubmit)="updateMovie()">
+            <div class="mb-3">
+              <label for="nama" class="form-label">Nama</label>
+              <input
+                id="nama"
+                type="text"
+                class="form-control"
+                formControlName="nama"
+              />
+            </div>
+            <div class="mb-3">
+              <label for="genre" class="form-label">Genre</label>
+              <select id="genre" class="form-select" formControlName="genre">
+                <option *ngFor="let item of category" [value]="item._id">
+                  {{ item.nama }}
+                </option>
+              </select>
+            </div>
+            <div class="mb-3">
+              <label for="deskripsi" class="form-label">Deskripsi</label>
+              <textarea
+                id="deskripsi"
+                type="text"
+                class="form-control"
+                formControlName="deskripsi"
+              >
+              </textarea>
+            </div>
+            <div class="mb-3">
+              <label for="rating" class="form-label">Rating</label>
+              <input
+                id="rating"
+                type="number"
+                class="form-control"
+                formControlName="rating"
+              />
+            </div>
+            <div class="mb-3">
+              <label for="poster" class="form-label">Poster</label>
+              <input
+                id="poster"
+                type="file"
+                class="form-control"
+                (change)="onFileSelected($event)"
+              />
+            </div>
+            <button
+              type="submit"
+              class="btn btn-primary"
+              [disabled]="isSubmitting"
+            >
+              {{ isSubmitting ? "Menyimpan..." : "Edit Movie" }}
+            </button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Loader -->
+  <div class="d-flex justify-content-center mt-4" *ngIf="isMovieLoading">
+    <div class="spinner-border text-primary" role="status">
+      <span class="visually-hidden">Loading...</span>
+    </div>
+  </div>
+
+  <!-- Detail Movie -->
+  <div class="card movie-card" *ngIf="movie != null">
+    <div class="row g-0">
+      <div class="col-12 col-md-4">
+        <img
+          src="{{ movie.poster }}"
+          class="img-fluid rounded-start"
+          alt="Poster {{ movie.nama }}"
+        />
+      </div>
+      <div class="col-12 col-md-8">
+        <div class="card-body">
+          <h5 class="card-title">{{ movie.nama }}</h5>
+          <h6 class="card-subtitle mb-2 text-muted">
+            {{ movie.rating }}
+            <i style="color: gold">&#9733;</i>
+            {{ movie.genre ? movie.genre.nama : "Belum Dikategorikan" }}
+          </h6>
+          <p class="card-text">
+            {{ movie.deskripsi }}
+          </p>
+        </div>
+      </div>
+    </div>
+    <div class="row"></div>
+  </div>
+
+  <div class="d-flex mt-3">
+    <h4>Review</h4>
+
+    <!-- Tombol untuk membuka review modal -->
+    <button
+      type="button"
+      class="btn btn-dark mb-3 ms-auto"
+      data-bs-toggle="modal"
+      data-bs-target="#reviewModal"
+    >
+      Tambah Review
+    </button>
+  </div>
+
+  <!-- Modal Review -->
+  <div
+    class="modal fade"
+    id="reviewModal"
+    tabindex="-1"
+    aria-labelledby="reviewModalLabel"
+    aria-hidden="true"
+  >
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="reviewModalLabel">Tambah Review</h5>
+          <button
+            type="button"
+            class="btn-close"
+            data-bs-dismiss="modal"
+            aria-label="Close"
+          ></button>
+        </div>
+        <div class="modal-body">
+          <form [formGroup]="reviewForm" (ngSubmit)="addReview()">
+            <div class="mb-3">
+              <label for="deskripsi" class="form-label">Ulasan</label>
+              <textarea
+                id="deskripsi"
+                type="text"
+                class="form-control"
+                formControlName="deskripsi"
+              >
+              </textarea>
+            </div>
+            <button
+              type="submit"
+              class="btn btn-primary"
+              [disabled]="isSubmitting"
+            >
+              {{ isSubmitting ? "Menyimpan..." : "Tambah Review" }}
+            </button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Loader -->
+  <div class="d-flex justify-content-center mt-4" *ngIf="isReviewLoading">
+    <div class="spinner-border text-primary" role="status">
+      <span class="visually-hidden">Loading...</span>
+    </div>
+  </div>
+
+  <!-- Review -->
+  <div class="pb-3">
+    <h6 *ngIf="!isReviewLoading && review.length == 0">Belum Ada Review</h6>
+
+    <div *ngIf="review.length > 0" class="p-0">
+      <div *ngFor="let item of review; index as i">
+        <div class="item">
+          <b>{{ item.user.nama }}</b>
+          <br />
+          <span>{{ item.deskripsi }}</span>
+        </div>
+        <hr />
+      </div>
+    </div>
+  </div>
+</div>

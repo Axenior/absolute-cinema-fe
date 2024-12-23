@@ -1,0 +1,35 @@
+<div class="container d-flex justify-content-center align-items-center mt-4">
+  <div class="card shadow-lg p-4" style="width: 400px">
+    <h3 class="text-center mb-4">Login</h3>
+    <form [formGroup]="authForm" (ngSubmit)="onAuth()">
+      <div class="mb-3">
+        <label for="email" class="form-label">Email</label>
+        <input
+          type="email"
+          class="form-control"
+          id="email"
+          placeholder="Masukkan email"
+          formControlName="email"
+          required
+        />
+      </div>
+      <div class="mb-3">
+        <label for="password" class="form-label">Password</label>
+        <input
+          type="password"
+          class="form-control"
+          id="password"
+          placeholder="Masukkan password"
+          formControlName="password"
+          required
+        />
+      </div>
+      <button type="submit" class="btn btn-dark w-100">
+        {{ isSubmitting ? "Login..." : "Login" }}
+      </button>
+    </form>
+    <p class="text-center mt-3">
+      Belum punya akun? <a href="/register">Daftar di sini</a>
+    </p>
+  </div>
+</div>

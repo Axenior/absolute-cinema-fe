@@ -1,0 +1,162 @@
+<div class="container mt-3">
+  <h4>Daftar Theater</h4>
+
+  <!-- Tombol untuk membuka modal -->
+  <button
+    type="button"
+    class="btn btn-primary mb-3"
+    data-bs-toggle="modal"
+    data-bs-target="#tambahTheaterModal"
+    *ngIf="user?.role == 'admin'"
+  >
+    Tambah Theater
+  </button>
+
+  <!-- Modal Tambah Theater -->
+  <div
+    class="modal fade"
+    id="tambahTheaterModal"
+    tabindex="-1"
+    aria-labelledby="tambahTheaterModalLabel"
+    aria-hidden="true"
+  >
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="tambahTheaterModalLabel">
+            Tambah Theater
+          </h5>
+          <button
+            type="button"
+            class="btn-close"
+            data-bs-dismiss="modal"
+            aria-label="Close"
+          ></button>
+        </div>
+        <div class="modal-body">
+          <form [formGroup]="theaterForm" (ngSubmit)="addTheater()">
+            <div class="mb-3">
+              <label for="nama" class="form-label">Nama</label>
+              <input
+                id="nama"
+                type="text"
+                class="form-control"
+                formControlName="nama"
+              />
+            </div>
+            <div class="mb-3">
+              <label for="noTelepon" class="form-label">No Telepon</label>
+              <input
+                id="noTelepon"
+                type="text"
+                class="form-control"
+                formControlName="noTelepon"
+              />
+            </div>
+            <button
+              type="submit"
+              class="btn btn-primary"
+              [disabled]="isSubmitting"
+            >
+              {{ isSubmitting ? "Menyimpan..." : "Tambah Theater" }}
+            </button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal Edit Theater -->
+  <div
+    class="modal fade"
+    id="editTheaterModal"
+    tabindex="-1"
+    aria-labelledby="editTheaterModalLabel"
+    aria-hidden="true"
+  >
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="editTheaterModalLabel">Ubah Theater</h5>
+          <button
+            type="button"
+            class="btn-close"
+            data-bs-dismiss="modal"
+            aria-label="Close"
+          ></button>
+        </div>
+        <div class="modal-body">
+          <form [formGroup]="theaterForm" (ngSubmit)="updateTheater()">
+            <div class="mb-3">
+              <label for="editNama" class="form-label">Nama</label>
+              <input
+                id="editNama"
+                type="text"
+                class="form-control"
+                formControlName="nama"
+              />
+            </div>
+            <div class="mb-3">
+              <label for="editNoTelepon" class="form-label">No Telepon</label>
+              <input
+                id="editNoTelepon"
+                type="text"
+                class="form-control"
+                formControlName="noTelepon"
+              />
+            </div>
+            <button
+              type="submit"
+              class="btn btn-primary"
+              [disabled]="isSubmitting"
+            >
+              {{ isSubmitting ? "Menyimpan..." : "Ubah Theater" }}
+            </button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Loader -->
+  <div class="d-flex justify-content-center mt-4" *ngIf="isTheaterLoading">
+    <div class="spinner-border text-primary" role="status">
+      <span class="visually-hidden">Loading...</span>
+    </div>
+  </div>
+
+  <table class="table table-striped" *ngIf="theater.length > 0">
+    <thead>
+      <tr>
+        <th>Theater</th>
+        <th>No Telepon</th>
+        <th>Jumlah Movie</th>
+        <th>Daftar Movie</th>
+        <th *ngIf="user?.role == 'admin'">Aksi</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let item of theater; index as i">
+        <td>{{ item.nama }}</td>
+        <td>{{ item.noTelepon }}</td>
+        <td>{{ item.movies.length }}</td>
+        <td>
+          <button class="btn btn-dark" (click)="goToDetail(item._id)">
+            Detail
+          </button>
+        </td>
+        <td *ngIf="user?.role == 'admin'">
+          <button
+            class="btn btn-warning me-2"
+            (click)="getTheaterById(item._id)"
+          >
+            Edit
+          </button>
+          <button class="btn btn-danger" (click)="deleteTheater(item._id)">
+            Hapus
+          </button>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</div>
